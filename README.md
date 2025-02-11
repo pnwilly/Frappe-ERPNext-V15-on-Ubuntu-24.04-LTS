@@ -1,0 +1,1 @@
+# Frappe-ERPNext-V15-on-Ubuntu-24.04-LTS
