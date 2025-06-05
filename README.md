@@ -39,8 +39,8 @@ sudo apt install -y git python3.11 python3.11-venv python3-dev python3-setuptool
 
 ```bash
 cd /tmp
-wget https://github.com/frappe/wkhtmltopdf/releases/download/v0.12.6/wkhtmltox_0.12.6-1.bionic_amd64.deb
-sudo apt install -y ./wkhtmltox_0.12.6-1.bionic_amd64.deb
+wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.jammy_amd64.deb
+sudo apt install -y ./wkhtmltox_0.12.6.1-3.jammy_amd64.deb
 
 # Verify installation (should show: wkhtmltopdf 0.12.6 with patched qt)
 wkhtmltopdf --version
