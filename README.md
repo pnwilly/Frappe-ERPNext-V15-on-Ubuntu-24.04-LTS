@@ -22,20 +22,21 @@ Run the following commands, one by one to **install all dependencies and set up 
 
 
 ### 1. Update & Install Core Dependencies
-# Install Core Dependencies (excluding wkhtmltopdf for now)
+# Install Core Dependencies (excluding wkhtmltopdf, installed separately below)
     sudo apt update && sudo apt upgrade -y
     sudo apt install -y git python3.11 python3.11-venv python3-dev python3-setuptools python3-pip \
         software-properties-common mariadb-server libmysqlclient-dev redis-server \
         curl npm xvfb libfontconfig nginx supervisor
     
-    # Install patched wkhtmltopdf (required for Frappe PDF generation)
+# Install patched wkhtmltopdf (required for Frappe PDF generation)
     cd /tmp
     wget https://github.com/frappe/wkhtmltopdf/releases/download/v0.12.6/wkhtmltox_0.12.6-1.bionic_amd64.deb
     sudo apt install -y ./wkhtmltox_0.12.6-1.bionic_amd64.deb
     
-    # Verify wkhtmltopdf is correctly installed
+# Verify wkhtmltopdf is correctly installed
+Output should be: wkhtmltopdf 0.12.6 (with patched qt)
+    
     wkhtmltopdf --version
-    # Output should be: wkhtmltopdf 0.12.6 (with patched qt)
 
 ### Secure MariaDB Setup
     sudo systemctl start mariadb
