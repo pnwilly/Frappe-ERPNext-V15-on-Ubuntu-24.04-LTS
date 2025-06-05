@@ -68,7 +68,10 @@ This directly edits the 50-server.cnf file using tee.
     sudo npm install -g yarn
 
 ### Install Bench CLI
-    sudo -H pip3 install frappe-bench --break-system-packages
+    python3 -m venv ~/.benchenv
+    source ~/.benchenv/bin/activate
+    pip install frappe-bench
+
 
 ### Initialize Bench & Setup Site
     bench init frappe-bench --frappe-branch version-15
