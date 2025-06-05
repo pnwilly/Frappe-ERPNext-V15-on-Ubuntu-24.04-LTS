@@ -25,7 +25,8 @@ Run the following commands, one by one to **install all dependencies and set up 
     sudo apt update && sudo apt upgrade -y
     sudo apt install -y git python3.11 python3.11-venv python3-dev python3-setuptools python3-pip \
         software-properties-common mariadb-server libmysqlclient-dev redis-server \
-        curl npm xvfb libfontconfig wkhtmltopdf nginx supervisor
+        curl npm xvfb libfontconfig nginx supervisor
+
 
 ### Secure MariaDB Setup
     sudo systemctl start mariadb
