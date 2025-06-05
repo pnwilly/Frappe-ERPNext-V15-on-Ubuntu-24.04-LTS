@@ -23,7 +23,7 @@ Run the following commands, one by one to **install all dependencies and set up 
 
 ### 1. Update & Install Core Dependencies
     sudo apt update && sudo apt upgrade -y
-    sudo apt install -y git python3-dev python3-setuptools python3-pip python3.12-venv \
+    sudo apt install -y git python3.11 python3.11-venv python3-dev python3-setuptools python3-pip \
         software-properties-common mariadb-server libmysqlclient-dev redis-server \
         curl npm xvfb libfontconfig wkhtmltopdf nginx supervisor
 
@@ -68,7 +68,7 @@ This directly edits the 50-server.cnf file using tee.
     sudo npm install -g yarn
 
 ### Install Bench CLI
-    python3 -m venv ~/.benchenv
+    python3.11 -m venv ~/.benchenv
     source ~/.benchenv/bin/activate
     pip install frappe-bench
 
