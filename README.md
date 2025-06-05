@@ -89,9 +89,9 @@ This directly edits the 50-server.cnf file using tee.
     bench start
 
 ### For production setup, run:
-Replace frappe with your actual Linux username
+Replace [user] with your actual Linux username
     
-    bench setup production frappe
+    sudo bench setup production [user]
     sudo supervisorctl restart all
     sudo systemctl restart nginx
 
