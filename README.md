@@ -21,7 +21,7 @@ Ubuntu 24.04 includes **Python 3.12** by default. Ensure the following dependenc
 Run the following commands, one by one to **install all dependencies and set up Frappe/ERPNext**:
 
 
-### Update & Install Core Dependencies
+### 1. Update & Install Core Dependencies
     sudo apt update && sudo apt upgrade -y
     sudo apt install -y git python3-dev python3-setuptools python3-pip python3.12-venv \
         software-properties-common mariadb-server libmysqlclient-dev redis-server \
