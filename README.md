@@ -76,6 +76,7 @@ This directly edits the 50-server.cnf file using tee.
 ### Initialize Bench & Setup Site
     bench init frappe-bench --frappe-branch version-15
     cd frappe-bench
+    bench set-config -g db_host 127.0.0.1
     bench new-site mysite.local --db-type=mariadb
 
 ### Set Active Site
@@ -95,6 +96,8 @@ This directly edits the 50-server.cnf file using tee.
 Replace [user] with your actual Linux username
     
     sudo bench setup production [user]
+    sudo bench setup nginx
+    sudo bench setup supervisor
     sudo supervisorctl restart all
     sudo systemctl restart nginx
 
