@@ -46,7 +46,10 @@ Run the following commands, one by one to **install all dependencies and set up 
     cd /tmp
     wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
     sudo apt install -y ./wkhtmltox_0.12.6.1-2.jammy_amd64.deb
-    
+
+# In case you face connection issue fetching additional packages, force IPv4 connection
+    echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+
 # Verify wkhtmltopdf is correctly installed
 Output should be: wkhtmltopdf 0.12.6 (with patched qt)
     
