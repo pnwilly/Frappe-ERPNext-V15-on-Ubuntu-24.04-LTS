@@ -42,9 +42,9 @@ Run the following commands, one by one to **install all dependencies and set up 
         software-properties-common mariadb-server libmysqlclient-dev redis-server \
         curl npm xvfb libfontconfig nginx supervisor
     
-# Install patched wkhtmltopdf (required for Frappe PDF generation)
+# Install patched (for Jammy) wkhtmltopdf (required for Frappe PDF generation)
     cd /tmp
-    wget https://github.com/frappe/wkhtmltopdf/releases/download/v0.12.6/wkhtmltox_0.12.6-1.bionic_amd64.deb
+    wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
     sudo apt install -y ./wkhtmltox_0.12.6-1.bionic_amd64.deb
     
 # Verify wkhtmltopdf is correctly installed
