@@ -22,8 +22,22 @@ Run the following commands, one by one to **install all dependencies and set up 
 
 
 ### 1. Update & Install Core Dependencies
-# Install Core Dependencies (excluding wkhtmltopdf, installed separately below)
     sudo apt update && sudo apt upgrade -y
+
+# Add Deadsnakes PPA to get newer Python versions
+    sudo apt update
+    sudo apt install -y software-properties-common
+    sudo add-apt-repository ppa:deadsnakes/ppa -y
+    sudo apt update
+
+# Install Python 3.11 and development tools
+    sudo apt install -y python3.11 python3.11-venv python3.11-dev
+
+# Set Python 3.11 as the default python3 (optional but recommended)
+    sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+    sudo update-alternatives --config python3
+    
+# Install Core Dependencies (excluding wkhtmltopdf, installed separately below)
     sudo apt install -y git python3.11 python3.11-venv python3-dev python3-setuptools python3-pip \
         software-properties-common mariadb-server libmysqlclient-dev redis-server \
         curl npm xvfb libfontconfig nginx supervisor
