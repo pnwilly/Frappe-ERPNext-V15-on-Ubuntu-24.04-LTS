@@ -1,0 +1,78 @@
+name: Assign and Notify Me on My PRs
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  checks: read
+  pull-requests: write
+
+jobs:
+  notify-owner:
+    if: github.event.pull_request.user.login == 'pnwilly'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Assign and mention PR author once the other checks finish
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const marker = "<!-- self-pr-notification -->";
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const pr = context.payload.pull_request;
+            const wait = (seconds) => new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+            const failed = ["failure", "cancelled", "timed_out", "action_required", "startup_failure"];
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number, per_page: 100 }
+            );
+            if (comments.some((comment) => comment.body?.includes(marker))) {
+              return;
+            }
+
+            // Let the other workflows and CodeQL register their checks, then wait for them.
+            await wait(30);
+            const deadline = Date.now() + 20 * 60 * 1000;
+            let others = [];
+            for (;;) {
+              const runs = await github.paginate(
+                github.rest.checks.listForRef,
+                { owner, repo, ref: pr.head.sha, per_page: 100 }
+              );
+              others = runs.filter((run) => run.name !== context.job);
+              if (others.every((run) => run.status === "completed") || Date.now() > deadline) {
+                break;
+              }
+              await wait(20);
+            }
+
+            const running = others.filter((run) => run.status !== "completed").map((run) => run.name);
+            const failures = others.filter((run) => failed.includes(run.conclusion)).map((run) => run.name);
+            const checks = running.length
+              ? `checks still running after 20 minutes: ${running.join(", ")}`
+              : failures.length
+                ? `checks failed: ${failures.join(", ")}`
+                : others.length
+                  ? "all checks passed"
+                  : "no checks ran";
+            const kind = pr.draft ? "draft PR" : "PR";
+
+            if (!pr.assignees?.some((assignee) => assignee.login === pr.user.login)) {
+              await github.rest.issues.addAssignees({
+                owner,
+                repo,
+                issue_number,
+                assignees: [pr.user.login],
+              });
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `${marker}\n@${pr.user.login} — your ${kind} is ready: **${pr.title}** (${checks})`,
+            });
