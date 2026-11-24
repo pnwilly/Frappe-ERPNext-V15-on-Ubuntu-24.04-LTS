@@ -1,4 +1,4 @@
-name: Assign and Notify Me on My PRs
+name: Assign Me on My PRs When CI Finishes
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 25
 
     steps:
-      - name: Assign and mention PR author once the other checks finish
+      - name: Assign PR author and report CI once the other checks finish
         uses: actions/github-script@v8
         with:
           script: |
@@ -52,14 +52,13 @@ jobs:
 
             const running = others.filter((run) => run.status !== "completed").map((run) => run.name);
             const failures = others.filter((run) => failed.includes(run.conclusion)).map((run) => run.name);
-            const checks = running.length
-              ? `checks still running after 20 minutes: ${running.join(", ")}`
+            const summary = running.length
+              ? `CI still running after 20 minutes: ${running.join(", ")}.`
               : failures.length
-                ? `checks failed: ${failures.join(", ")}`
+                ? `CI failed: ${failures.join(", ")}.`
                 : others.length
-                  ? "all checks passed"
-                  : "no checks ran";
-            const kind = pr.draft ? "draft PR" : "PR";
+                  ? "CI passed."
+                  : "No CI checks ran.";
 
             if (!pr.assignees?.some((assignee) => assignee.login === pr.user.login)) {
               await github.rest.issues.addAssignees({
@@ -74,5 +73,5 @@ jobs:
               owner,
               repo,
               issue_number,
-              body: `${marker}\n@${pr.user.login} — your ${kind} is ready: **${pr.title}** (${checks})`,
+              body: `${marker}\n${summary}`,
             });
