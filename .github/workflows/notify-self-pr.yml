@@ -1,12 +1,16 @@
-name: Assign Me on My PRs When CI Finishes
+name: Notify Me of CI Results on My PRs
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize, reopened]
 
 permissions:
   checks: read
   pull-requests: write
+
+concurrency:
+  group: notify-self-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   notify-owner:
@@ -15,14 +19,15 @@ jobs:
     timeout-minutes: 25
 
     steps:
-      - name: Assign PR author and report CI once the other checks finish
+      - name: Report the CI result for this push to the PR author
         uses: actions/github-script@v8
         with:
           script: |
-            const marker = "<!-- self-pr-notification -->";
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
             const pr = context.payload.pull_request;
+            const marker = `<!-- self-pr-notification ${pr.head.sha} -->`;
+            const commit = pr.head.sha.slice(0, 7);
             const wait = (seconds) => new Promise((resolve) => setTimeout(resolve, seconds * 1000));
             const failed = ["failure", "cancelled", "timed_out", "action_required", "startup_failure"];
 
@@ -53,14 +58,17 @@ jobs:
             const running = others.filter((run) => run.status !== "completed").map((run) => run.name);
             const failures = others.filter((run) => failed.includes(run.conclusion)).map((run) => run.name);
             const summary = running.length
-              ? `CI still running after 20 minutes: ${running.join(", ")}.`
+              ? `CI still running after 20 minutes on ${commit}: ${running.join(", ")}.`
               : failures.length
-                ? `CI failed: ${failures.join(", ")}.`
+                ? `CI failed on ${commit}: ${failures.join(", ")}.`
                 : others.length
-                  ? "CI passed."
-                  : "No CI checks ran.";
+                  ? `CI passed on ${commit}.`
+                  : `No CI checks ran on ${commit}.`;
 
-            if (!pr.assignees?.some((assignee) => assignee.login === pr.user.login)) {
+            // GitHub does not notify me of my own PRs. The first result notifies through the
+            // assignment; later results notify through a mention, since a repeat assignment is silent.
+            const assigned = pr.assignees?.some((assignee) => assignee.login === pr.user.login);
+            if (!assigned) {
               await github.rest.issues.addAssignees({
                 owner,
                 repo,
@@ -73,5 +81,5 @@ jobs:
               owner,
               repo,
               issue_number,
-              body: `${marker}\n${summary}`,
+              body: assigned ? `${marker}\n@${pr.user.login} ${summary}` : `${marker}\n${summary}`,
             });
